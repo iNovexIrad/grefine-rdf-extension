@@ -9,6 +9,7 @@ td.highlighted {
 
 div.rdf-schema-alignment-dialog-preview {
     height: 375px;
+	overflow: auto;
 }
 
 div.rdf-schema-alignment-dialog-canvas {
