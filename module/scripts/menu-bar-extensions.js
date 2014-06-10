@@ -465,7 +465,40 @@ $(function(){
 					
 			        }
 			    ]
+			},
+			{  //PUBISH DATA for MATONTO
+				"id":"publishData",
+				"label":"Publish Data",
+				"submenu" : [ 
+					{
+						"id" : "matProj/publish-matonto-data",
+						label: "Publish data to MatOnto",
+						click: function() {
+							var frame = DialogSystem.createDialog();
+    
+							frame.width("600px");
+    
+							var header = $('<div></div>').addClass("dialog-header").text("Publish Data").appendTo(frame);
+							var body = $('<div>Are you sure you want to publish to the interwebs?</div>').addClass("dialog-body").appendTo(frame);
+							        var input = $('<p></p>').addClass('DataName').text("Data Set Name:       ").appendTo(body);
+							$('<input type="text" name="DataNameInput">').addClass('DataNameInput').appendTo(input);
+							var dataDescInput = $('<p></p>').addClass('DataDesc').text("Data Set Description:").appendTo(body);
+							$('<input type="text" name="DataDescInput">').addClass('DataDescInput').appendTo(dataDescInput);
+							       var apiInput = $('<p></p>').addClass('APIKey').text("CKAN API Key:        ").appendTo(body);
+							$('<input type="text" name="ApiKeyInput">').addClass('ApiKeyInput').appendTo(apiInput);
+							var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
+							$('<button></button>').addClass('button').text("Cancel").click(function() {
+								DialogSystem.dismissUntil(0);
+								}).appendTo(footer);
+							$('<button></button>').addClass('button').text("Publish").click(function(){RdfExporterMenuBar.publishRDF()}).appendTo(footer);	
+							DialogSystem.showDialog(frame);
+							
+						}
+					}
+				]
 			}
+			
+			
 	);
 	DataTableColumnHeaderUI.extendMenu(function(column, columnHeaderUI, menu) {
 		MenuSystem.appendTo(menu, [ "core/reconcile" ], [
@@ -483,4 +516,34 @@ $(function(){
 	
 	RdfReconciliationManager.synchronizeServices();
 });
+
+RdfExporterMenuBar.publishRDF = function() {
+    var name = $.trim(theProject.metadata.name.replace(/\W/g, ' ')).replace(/\s+/g, '-');
+    var form = document.createElement("form");
+    $(form)
+        .css("display", "none")
+        .attr("method", "post")
+        .attr("action", "command/core/export-rows/" + name + ".ttl")
+        .attr("target", "gridworks-export");
+
+    $('<input />')
+        .attr("name", "engine")
+        .attr("value", JSON.stringify(ui.browsingEngine.getJSON()))
+        .appendTo(form);
+    $('<input />')
+        .attr("name", "project")
+        .attr("value", theProject.id)
+        .appendTo(form);
+    $('<input />')
+        .attr("name", "format")
+        .attr("value", "Turtle")
+        .appendTo(form);
+
+    document.body.appendChild(form);
+
+    form.submit();
+
+    document.body.removeChild(form);
+	DialogSystem.dismissUntil(0);
+};
 
