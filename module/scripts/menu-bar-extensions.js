@@ -481,16 +481,21 @@ $(function(){
 							var header = $('<div></div>').addClass("dialog-header").text("Publish Data").appendTo(frame);
 							var body = $('<div>Are you sure you want to publish to the interwebs?</div>').addClass("dialog-body").appendTo(frame);
 							        var input = $('<p></p>').addClass('DataName').text("Data Set Name:       ").appendTo(body);
-							$('<input type="text" name="DataNameInput">').addClass('DataNameInput').appendTo(input);
+							$('<input type="text" name="DataNameInput" id="DataNameInput">').addClass('DataNameInput').val(theProject.metadata.name).appendTo(input);
 							var dataDescInput = $('<p></p>').addClass('DataDesc').text("Data Set Description:").appendTo(body);
-							$('<input type="text" name="DataDescInput">').addClass('DataDescInput').appendTo(dataDescInput);
+							$('<input type="text" name="DataDescInput" id="DataDescInput">').addClass('DataDescInput').appendTo(dataDescInput);
 							       var apiInput = $('<p></p>').addClass('APIKey').text("CKAN API Key:        ").appendTo(body);
-							$('<input type="text" name="ApiKeyInput">').addClass('ApiKeyInput').appendTo(apiInput);
+							$('<input type="text" name="ApiKeyInput" id="ApiKeyInput">').addClass('ApiKeyInput').val("9e14b68b-b39a-478d-b367-969f4c6eebf4").appendTo(apiInput);
 							var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
 							$('<button></button>').addClass('button').text("Cancel").click(function() {
 								DialogSystem.dismissUntil(0);
 								}).appendTo(footer);
-							$('<button></button>').addClass('button').text("Publish").click(function(){RdfExporterMenuBar.publishRDF()}).appendTo(footer);	
+							//alert(theProject.metadata.name);
+							//$('#ApiKeyInput').val("9e14b68b-b39a-478d-b367-969f4c6eebf4");
+							//$('#DataNameInput').val(theProject.metadata.name);
+							//document.getElementById("ApiKeyInput").value = "9e14b68b-b39a-478d-b367-969f4c6eebf4";
+							$('<button></button>').addClass('button').text("Publish").click(function(){RdfExporterMenuBar.publishRDF(document.getElementById("ApiKeyInput").value, 
+										document.getElementById("DataNameInput").value, document.getElementById("DataDescInput").value)}).appendTo(footer);	
 							DialogSystem.showDialog(frame);
 							
 						}
@@ -517,33 +522,43 @@ $(function(){
 	RdfReconciliationManager.synchronizeServices();
 });
 
-RdfExporterMenuBar.publishRDF = function() {
-    var name = $.trim(theProject.metadata.name.replace(/\W/g, ' ')).replace(/\s+/g, '-');
-    var form = document.createElement("form");
-    $(form)
-        .css("display", "none")
-        .attr("method", "post")
-        .attr("action", "command/core/export-rows/" + name + ".ttl")
-        .attr("target", "gridworks-export");
-
-    $('<input />')
-        .attr("name", "engine")
-        .attr("value", JSON.stringify(ui.browsingEngine.getJSON()))
-        .appendTo(form);
-    $('<input />')
-        .attr("name", "project")
-        .attr("value", theProject.id)
-        .appendTo(form);
-    $('<input />')
-        .attr("name", "format")
-        .attr("value", "Turtle")
-        .appendTo(form);
-
-    document.body.appendChild(form);
-
-    form.submit();
-
-    document.body.removeChild(form);
-	DialogSystem.dismissUntil(0);
+RdfExporterMenuBar.publishRDF = function(ApiKey, DataName, DataDesc) {
+	if(ApiKey == ""){
+		alert("You need a CKAN API Key");
+	}
+	else if(DataSet == ""){
+		alert("You need a name for your data set");
+	}
+	else if(DataDesc == ""){
+		alert("You need a description for your data set");
+	}
+	else{
+		var name = $.trim(theProject.metadata.name.replace(/\W/g, ' ')).replace(/\s+/g, '-');
+		var form = document.createElement("form");
+		$(form)
+			.css("display", "none")
+			.attr("method", "post")
+			.attr("action", "http://10.10.1.90:8080/MatRest/publish/publish");
+		$('<input />')
+			.attr("name", "project")
+			.attr("value", theProject.id)
+			.appendTo(form);
+		$('<input />')
+			.attr("name", "CkanApi")
+			.attr("value", ApiKey)
+			.appendTo(form);
+		$('<input />')
+			.attr("name", "DataName")
+			.attr("value", DataName)
+			.appendTo(form);
+		$('<input />')
+			.attr("name", "DataDesc")
+			.attr("value", DataDesc)
+			.appendTo(form);
+		document.body.appendChild(form);
+		form.submit();
+		DialogSystem.dismissUntil(0);
+	}
+    
 };
 
