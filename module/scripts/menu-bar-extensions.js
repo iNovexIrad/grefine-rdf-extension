@@ -526,7 +526,7 @@ RdfExporterMenuBar.publishRDF = function(ApiKey, DataName, DataDesc) {
 	if(ApiKey == ""){
 		alert("You need a CKAN API Key");
 	}
-	else if(DataSet == ""){
+	else if(DataName == ""){
 		alert("You need a name for your data set");
 	}
 	else if(DataDesc == ""){
