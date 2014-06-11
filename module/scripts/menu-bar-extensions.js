@@ -482,20 +482,31 @@ $(function(){
 							var body = $('<div>Are you sure you want to publish to the interwebs?</div>').addClass("dialog-body").appendTo(frame);
 							        var input = $('<p></p>').addClass('DataName').text("Data Set Name:       ").appendTo(body);
 							$('<input type="text" name="DataNameInput" id="DataNameInput">').addClass('DataNameInput').val(theProject.metadata.name).appendTo(input);
+							
 							var dataDescInput = $('<p></p>').addClass('DataDesc').text("Data Set Description:").appendTo(body);
 							$('<input type="text" name="DataDescInput" id="DataDescInput">').addClass('DataDescInput').appendTo(dataDescInput);
+							
 							       var apiInput = $('<p></p>').addClass('APIKey').text("CKAN API Key:        ").appendTo(body);
 							$('<input type="text" name="ApiKeyInput" id="ApiKeyInput">').addClass('ApiKeyInput').val("9e14b68b-b39a-478d-b367-969f4c6eebf4").appendTo(apiInput);
+							
+							var pubUrlInput = $('<p></p>').addClass('PublishUrl').text("Publishing Service URL:").appendTo(body);
+							$('<input type="text" name="PubUrl" id="PubUrl">').addClass('PubUrl').val("http://10.10.1.90:8080/MatRest/publish/refine_rdf").appendTo(pubUrlInput);
+							
 							var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
 							$('<button></button>').addClass('button').text("Cancel").click(function() {
 								DialogSystem.dismissUntil(0);
 								}).appendTo(footer);
+								
 							//alert(theProject.metadata.name);
+							//alert(document.getElementById("PubUrl").value);
 							//$('#ApiKeyInput').val("9e14b68b-b39a-478d-b367-969f4c6eebf4");
 							//$('#DataNameInput').val(theProject.metadata.name);
 							//document.getElementById("ApiKeyInput").value = "9e14b68b-b39a-478d-b367-969f4c6eebf4";
-							$('<button></button>').addClass('button').text("Publish").click(function(){RdfExporterMenuBar.publishRDF(document.getElementById("ApiKeyInput").value, 
-										document.getElementById("DataNameInput").value, document.getElementById("DataDescInput").value)}).appendTo(footer);	
+							$('<button></button>').addClass('button').text("Publish").click(function(){RdfExporterMenuBar.publishRDF(
+										document.getElementById("ApiKeyInput").value, 
+										document.getElementById("DataNameInput").value, 
+										document.getElementById("DataDescInput").value,
+										document.getElementById("PubUrl").value)}).appendTo(footer);	
 							DialogSystem.showDialog(frame);
 							
 						}
@@ -522,7 +533,7 @@ $(function(){
 	RdfReconciliationManager.synchronizeServices();
 });
 
-RdfExporterMenuBar.publishRDF = function(ApiKey, DataName, DataDesc) {
+RdfExporterMenuBar.publishRDF = function(ApiKey, DataName, DataDesc, pubUrl) {
 	if(ApiKey == ""){
 		alert("You need a CKAN API Key");
 	}
@@ -532,13 +543,18 @@ RdfExporterMenuBar.publishRDF = function(ApiKey, DataName, DataDesc) {
 	else if(DataDesc == ""){
 		alert("You need a description for your data set");
 	}
+	else if(pubUrl == ""){
+		alert("You publishing service URL");
+	}
 	else{
 		var name = $.trim(theProject.metadata.name.replace(/\W/g, ' ')).replace(/\s+/g, '-');
 		var form = document.createElement("form");
+		
+		//alert(pubUrl);
 		$(form)
 			.css("display", "none")
 			.attr("method", "post")
-			.attr("action", "http://10.10.1.90:8080/MatRest/publish/publish");
+			.attr("action", pubUrl);
 		$('<input />')
 			.attr("name", "project")
 			.attr("value", theProject.id)
