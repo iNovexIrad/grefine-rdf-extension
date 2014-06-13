@@ -490,7 +490,7 @@ $(function(){
 							$('<input type="text" name="ApiKeyInput" id="ApiKeyInput">').addClass('ApiKeyInput').val("9e14b68b-b39a-478d-b367-969f4c6eebf4").appendTo(apiInput);
 							
 							var pubUrlInput = $('<p></p>').addClass('PublishUrl').text("Publishing Service URL:").appendTo(body);
-							$('<input type="text" name="PubUrl" id="PubUrl">').addClass('PubUrl').val("http://10.10.1.90:8080/MatRest/publish/refine_rdf").appendTo(pubUrlInput);
+							$('<input type="text" name="PubUrl" id="PubUrl">').addClass('PubUrl').val("http://10.10.1.187:8080/MatRest/publish/refine_rdf").appendTo(pubUrlInput);
 							
 							var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
 							$('<button></button>').addClass('button').text("Cancel").click(function() {
@@ -572,6 +572,7 @@ RdfExporterMenuBar.publishRDF = function(ApiKey, DataName, DataDesc, pubUrl) {
 			.attr("value", DataDesc)
 			.appendTo(form);
 		document.body.appendChild(form);
+		
 		form.submit();
 		DialogSystem.dismissUntil(0);
 	}
