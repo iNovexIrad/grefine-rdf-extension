@@ -487,7 +487,7 @@ $(function(){
 							$('<input type="text" name="DataDescInput" id="DataDescInput">').addClass('DataDescInput').appendTo(dataDescInput);
 							
 							       var apiInput = $('<p></p>').addClass('APIKey').text("CKAN API Key:        ").appendTo(body);
-							$('<input type="text" name="ApiKeyInput" id="ApiKeyInput">').addClass('ApiKeyInput').val("9e14b68b-b39a-478d-b367-969f4c6eebf4").appendTo(apiInput);
+							$('<input type="text" name="ApiKeyInput" id="ApiKeyInput">').addClass('ApiKeyInput').val("5662a180-bff3-4d3e-974d-8ffdc4a1d7ac").appendTo(apiInput);
 							
 							var pubUrlInput = $('<p></p>').addClass('PublishUrl').text("Publishing Service URL:").appendTo(body);
 							$('<input type="text" name="PubUrl" id="PubUrl">').addClass('PubUrl').val("http://10.10.1.187:8080/MatRest/publish/refine_rdf").appendTo(pubUrlInput);
