@@ -554,7 +554,8 @@ RdfExporterMenuBar.publishRDF = function(ApiKey, DataName, DataDesc, pubUrl) {
 		$(form)
 			.css("display", "none")
 			.attr("method", "post")
-			.attr("action", pubUrl);
+			.attr("action", pubUrl)
+			.attr("target", "gridworks-export");
 		$('<input />')
 			.attr("name", "project")
 			.attr("value", theProject.id)
@@ -573,7 +574,11 @@ RdfExporterMenuBar.publishRDF = function(ApiKey, DataName, DataDesc, pubUrl) {
 			.appendTo(form);
 		document.body.appendChild(form);
 		
+		window.open("about:blank", "gridworks-export");
 		form.submit();
+
+		document.body.removeChild(form);
+		
 		DialogSystem.dismissUntil(0);
 	}
     
