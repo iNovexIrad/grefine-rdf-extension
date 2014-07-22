@@ -491,7 +491,7 @@ $(function(){
 							
 							var pubUrlInput = $('<p></p>').addClass('PublishUrl').text("Publishing Service URL:").appendTo(body);
 							$('<input type="text" name="PubUrl" id="PubUrl">').addClass('PubUrl').val("http://10.10.1.187:8080/MatRest/publish/refine_rdf").appendTo(pubUrlInput);
-							
+							var succes = $('<p></p>').addClass('SuccessMessage').appendTo(body);
 							var footer = $('<div></div>').addClass("dialog-footer").appendTo(frame);
 							$('<button></button>').addClass('button').text("Cancel").click(function() {
 								DialogSystem.dismissUntil(0);
@@ -548,14 +548,15 @@ RdfExporterMenuBar.publishRDF = function(ApiKey, DataName, DataDesc, pubUrl) {
 	}
 	else{
 		var name = $.trim(theProject.metadata.name.replace(/\W/g, ' ')).replace(/\s+/g, '-');
+		var frm = document.createElement("iframe");
 		var form = document.createElement("form");
 		
 		//alert(pubUrl);
-		$(form)
+		/*$(form)
 			.css("display", "none")
 			.attr("method", "post")
 			.attr("action", pubUrl)
-			.attr("target", "gridworks-export");
+			.attr("target", "_parent");
 		$('<input />')
 			.attr("name", "project")
 			.attr("value", theProject.id)
@@ -572,14 +573,73 @@ RdfExporterMenuBar.publishRDF = function(ApiKey, DataName, DataDesc, pubUrl) {
 			.attr("name", "DataDesc")
 			.attr("value", DataDesc)
 			.appendTo(form);
-		document.body.appendChild(form);
+		frm.appendChild(form);*/
 		
-		window.open("about:blank", "gridworks-export");
-		form.submit();
+		
+		var loadingFrame = DialogSystem.createDialog();
+		var header = $('<div></div>').addClass("dialog-header").text("Publishing").appendTo(loadingFrame);
+		var body = $('<div><img src="images/small-spinner.gif">Sending Request, Please Wait...</div>').addClass("loading-body").appendTo(loadingFrame);
+		loadingFrame.width("400px");
+		DialogSystem.showDialog(loadingFrame);
+		$.ajax({
+			type: "POST",
+			url:pubUrl,
+			data: {project: theProject.id, CkanApi:ApiKey, DataName:DataName, DataDesc:DataDesc},
+			dataType:'json',
+			crossDomain: true
+			
+		}).done(function(msg){
+			alert("Publish Successful");
+			console.log(msg);
+			DialogSystem.dismissUntil(0);
+		}).error(function(msg){
+			alert(msg.responseText);
+			console.log(msg);
+			DialogSystem.dismissUntil(0);
+		});
+		
+		//myWin = window.open("about:blank", "gridworks-export");
+		//myWin.close();
+		//form.submit();
 
-		document.body.removeChild(form);
+		//document.body.removeChild(form);
 		
-		DialogSystem.dismissUntil(0);
+		//DialogSystem.dismissUntil(0);
+		
+		/*function createRequestObject() {
+			var ro = false;
+			if (window.XMLHttpRequest) {             // Mozilla, Safari, ...
+			  ro = new XMLHttpRequest();
+			} else if (window.ActiveXObject) {       // IE < 7.0
+			  try {
+				ro = new ActiveXObject("Msxml2.XMLHTTP");
+			  } catch (e) {
+				try {
+				  ro = new ActiveXObject("Microsoft.XMLHTTP");
+				} catch (e) { }
+			  }
+			}
+			return ro;
+		}
+		var http = createRequestObject();
+		if(http){
+			
+			http.open('POST', pubUrl);
+			http.setRequestHeader("Access-Control-Allow-Origin","*");
+			http.send("project=" + theProject.id + "&CkanApi=" + ApiKey + "&DataName=" + DataName + "&DataDesc" + DataDesc + "&output=json");
+			http.onreadystatechange = function() {
+				
+				if(http.readyState == 4 && http.status==200){
+					alert(http.status);
+				}
+				else if(http.readyState > 4 || http.readyState < 0){
+					alert("Failure :(");
+				}
+			}
+		}*/
+
+		
+		
 	}
     
 };
